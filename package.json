@@ -8,7 +8,8 @@
     "dev": "nodemon ./index.js",
     "start": "node ./index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate:env": "env-example-gen"
   },
   "dependencies": {
     "@better-auth/mongo-adapter": "^1.7.19",
@@ -29,6 +30,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "env-example-gen": "^1.0.0",
     "nodemon": "^3.1.14",
     "supertest": "^7.3.2",
     "vitest": "^5.1.0"
