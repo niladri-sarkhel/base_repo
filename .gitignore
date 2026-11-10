@@ -1,0 +1,53 @@
+# =================( DEPENDENCIES )=================
+node_modules/
+jspm_packages/
+
+# =================( ENVIRONMENT & SECRETS )=================
+.env
+.env.*
+!.env.example
+*.env
+
+# =================( BUILD & GENERATED ARTIFACTS )=================
+dist/
+build/
+out/
+src/validators/generated/
+openapi/generated/
+
+# =================( LOGS & DATABASES )=================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.sqlite
+*.sqlite-journal
+
+# =================( TESTING & COVERAGE )=================
+coverage/
+.nyc_output/
+.jest/
+
+# =================( OS & EDITOR FILES )=================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and Editors (VS Code, Neovim, WebStorm)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.nvim/

@@ -1,0 +1,54 @@
+{
+  "name": "your_project_name",
+  "version": "1.0.0",
+  "description": "write your project description here",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "start": "node ./index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@better-auth/mongo-adapter": "^1.7.19",
+    "bcrypt": "^6.0.0",
+    "better-auth": "^1.7.19",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "ioredis": "^6.0.0",
+    "joi": "^18.3.2",
+    "joi-to-swagger": "^6.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.12.1",
+    "nodemailer": "^10.5.0",
+    "pino": "^10.4.0",
+    "pino-pretty": "^13.2.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.2",
+    "vitest": "^5.1.0"
+  },
+  "imports": {
+    "#config": "./src/config/index.js",
+    "#controllers": "./src/controllers/index.js",
+    "#errors": "./src/errors/index.js",
+    "#middlewares": "./src/middlewares/index.js",
+    "#models": "./src/models/index.js",
+    "#routes": "./src/routes/index.js",
+    "#services": "./src/services/index.js",
+    "#templates": "./src/templates/index.js",
+    "#utils": "./src/utils/index.js",
+    "#validators": "./src/validators/index.js",
+    "#app": "./src/app.js",
+    "#server": "./src/server.js"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "@scarf/scarf": false
+  }
+}
