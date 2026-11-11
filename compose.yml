@@ -1,10 +1,10 @@
-name: base_repo_backend
+name: ${APP_NAME:-base_repo}
 
 services:
   # nodejs server configuration
   nodejs:
     image: node:26-alpine
-    container_name: base_repo_server
+    container_name: ${APP_NAME:-base_repo}_server
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
     volumes:
@@ -12,12 +12,12 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - "${APP_PORT:-3000}:3000"
     stdin_open: true
     tty: true
     command: sh -c "tail -f /dev/null"
     networks:
-      - base_repo_net
+      - backend_net
     depends_on:
       postgres:
         condition: service_healthy
@@ -25,20 +25,20 @@ services:
   # postgresql server configuration
   postgres:
     image: postgres:latest
-    container_name: base_repo_postgres
+    container_name: ${APP_NAME:-base_repo}_postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_USER: blue
-      POSTGRES_PASSWORD: adminfjsl90vvv
-      POSTGRES_DB: app_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
-      - base_repo_net
+      - backend_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U blue"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -47,22 +47,33 @@ services:
   # redis db server configuration
   redis:
     image: redis:7-alpine
-    container_name: base_repo_redis
+    container_name: ${APP_NAME:-base_repo}_redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes --requirepass redis_db_password@2708
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_data:/data
     networks:
-      - base_repo_net
+      - backend_net
+
+  # mailpit local email testing configuration
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ${APP_NAME:-base_repo}_mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Web UI port
+      - "1025:1025" # SMTP server port
+    networks:
+      - backend_net     
 
 volumes:
   postgres_data:
-    name: base_repo_postgres_data
+    name: ${APP_NAME:-base_repo}_postgres_data
   redis_data:
-    name: base_repo_redis_data
+    name: ${APP_NAME:-base_repo}_redis_data
 
 networks:
-  base_repo_net:
+  backend_net:
     driver: bridge
