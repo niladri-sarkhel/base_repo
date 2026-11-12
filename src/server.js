@@ -3,14 +3,13 @@
 import http from "node:http";
 import { app } from "#app";
 import { logger } from "#utils";
-import { connectMongoDB } from "#config";
+import { connectPostgreSQL, disconnectPostgreSQL } from "#config";
 
-export const startServer = async ({ port, appName, appUrl, databaseUrl }) => {
+export const startServer = async ({ port, appName, appUrl }) => {
     const httpServer = http.createServer(app);
     let isShuttingDown = false;
 
     httpServer.on("listening", () => {
-        // logger.info({ service: "auth" }, "NODE_LOKI_TEST");
         logger.info(
             { appName, appUrl },
             "🚀 %s server running at %s",
@@ -41,7 +40,7 @@ export const startServer = async ({ port, appName, appUrl, databaseUrl }) => {
         process.exit(1);
     });
 
-    const shutdown = (signalOrError) => {
+    const shutdown = async (signalOrError) => {
         if (isShuttingDown) return;
         isShuttingDown = true;
 
@@ -53,6 +52,13 @@ export const startServer = async ({ port, appName, appUrl, databaseUrl }) => {
             );
             process.exit(1);
         }, 10000);
+
+        try {
+            // Gracefully close PostgreSQL pool
+            await disconnectPostgreSQL();
+        } catch (dbErr) {
+            logger.error({ err: dbErr }, "Error closing PostgreSQL connection");
+        }
 
         httpServer.close((err) => {
             clearTimeout(forceQuitTimeout);
@@ -79,7 +85,8 @@ export const startServer = async ({ port, appName, appUrl, databaseUrl }) => {
     process.on("SIGTERM", () => shutdown("SIGTERM"));
 
     try {
-        await connectMongoDB(databaseUrl);
+        // Initialize PostgreSQL connection pool before starting server listener
+        await connectPostgreSQL();
 
         httpServer.listen(port, "0.0.0.0");
     } catch (error) {
