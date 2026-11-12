@@ -1,6 +1,6 @@
 // index.js
 
-// import { env } from "#config";
+import { env } from "#config";
 // import { startServer } from "#server";
 
 // startServer({
@@ -10,5 +10,4 @@
 //     databaseUrl: env.MONGO_URI,
 // });
 
-console.log(process.env);
-console.log("hello world : modified 111111111");
+console.log(env);
