@@ -44,6 +44,7 @@
     "#templates": "./src/templates/index.js",
     "#utils": "./src/utils/index.js",
     "#validators": "./src/validators/index.js",
+    "#constants": "./src/constants/index.js",
     "#app": "./src/app.js",
     "#server": "./src/server.js"
   },

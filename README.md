@@ -6,7 +6,11 @@ npm install
 
 ### alias script to read from a specific .env file (e.g.: .env.dev) while starting docker container from a compose.yml file.
 ```sh
-alias dcdev="docker compose --env-file .env.dev"
+# For Development (uses dev compose file and dev env)
+alias dcdev="docker compose -f compose.dev.yml --env-file .env.dev"
+
+# For Production/Default (uses standard compose file and production env)
+alias dcprod="docker compose -f compose.yml --env-file .env"
 
 dcdev up -d # to start the container
 dcdev logs -f # to see the logs of the container

@@ -6,3 +6,4 @@ export const testRouter = express.Router();
 testRouter
     .get("/ping", testController.ping)
     .get("/db", testController.dbTest)
+    .post("/test-email", testController.sendTestEmail)

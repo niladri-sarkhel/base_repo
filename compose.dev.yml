@@ -1,0 +1,81 @@
+name: ${APP_NAME:-base_repo}
+
+services:
+  # nodejs server configuration
+  nodejs:
+    image: node:26-alpine
+    container_name: ${APP_NAME:-base_repo}_server
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    env_file:
+      - .env.dev
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    stdin_open: true
+    tty: true
+    command: sh -c "tail -f /dev/null"
+    networks:
+      - backend_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:     
+        condition: service_started
+
+  # postgresql server configuration
+  postgres:
+    image: postgres:latest
+    container_name: ${APP_NAME:-base_repo}_postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # redis db server configuration
+  redis:
+    image: redis:7-alpine
+    container_name: ${APP_NAME:-base_repo}_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend_net
+
+  # mailpit local email testing configuration
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ${APP_NAME:-base_repo}_mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Web UI port
+      - "1025:1025" # SMTP server port
+    networks:
+      - backend_net     
+
+volumes:
+  postgres_data:
+    name: ${APP_NAME:-base_repo}_postgres_data
+  redis_data:
+    name: ${APP_NAME:-base_repo}_redis_data
+
+networks:
+  backend_net:
+    driver: bridge
