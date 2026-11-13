@@ -42,6 +42,7 @@
     "#routes": "./src/routes/index.js",
     "#services": "./src/services/index.js",
     "#templates": "./src/templates/index.js",
+    "#lib": "./src/lib/index.js",
     "#utils": "./src/utils/index.js",
     "#validators": "./src/validators/index.js",
     "#constants": "./src/constants/index.js",

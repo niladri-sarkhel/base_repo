@@ -49,6 +49,10 @@ const envSchema = joi.object({
 
     JWT_EXPIRES_IN: joi.string().default("7d"),
 
+    BETTERAUTH_SECRET: joi.string().min(16).required().messages({
+        "string.min": "BETTERAUTH_SECRET must be at least 16 characters long for security",
+    }),
+
     REDIS_HOST: joi.string().required(),
 
     REDIS_PORT: joi.number().integer().port().default(6379),

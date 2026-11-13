@@ -44,3 +44,8 @@ npm run dev
     "start": "node --env-file=.env.production index.js",
   },
 ```
+
+### linux command to generate a secret key 
+```sh
+openssl rand -base64 32
+```
