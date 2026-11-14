@@ -17,6 +17,8 @@ export const requestLogger = (req, res, next) => {
             ip: req.ip || req.socket.remoteAddress,
             userAgent: req.headers["user-agent"] || null,
             userId: req.user?.id || null, // Captures authenticated user ID if available
+            // reqBody: req.body
+            ...(req.body && Object.keys(req.body).length > 0 && { reqBody: req.body })
         };
 
         // Dynamically adjust log level based on HTTP status code
