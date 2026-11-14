@@ -21,7 +21,6 @@ app
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
     .use(cookieParser())
-    .all(`${env.API_PREFIX}/auth/*path`, toNodeHandler(auth))
     .use(env.API_PREFIX, apiV1Router)
     .use((req, _res, next) => {
         next(

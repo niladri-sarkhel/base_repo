@@ -13,23 +13,45 @@ export const auth = betterAuth({
     database: dbPool,
     baseURL: env.APP_URL,
     secret: env.BETTERAUTH_SECRET,
-    basePath: `${env.API_PREFIX}/auth`, // 👈 Tell Better Auth to expect routes under /api/v1/auth
+    basePath: `${env.API_PREFIX}/auth`,
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
-        async sendVerificationEmail({ user, url, token }) {
-            // 🚀 THIS IS WHERE OUR CUSTOM MAIL SERVICE TAKES OVER!
-            const subject = MAIL_SUBJECTS.ACCOUNT_REGISTRATION || "Verify Your Account";
-            const purposeText = "Welcome to Global Marketplace! Please use the verification code/link below to activate your account.";
+        async onExistingUserSignUp({ user }, request) {
+            console.log("🔁 Existing user sign-up attempt for:", user.email);
+            if (!user.emailVerified) {
+                console.log("📧 Resending verification email to existing unverified user:", user.email);
+                await auth.api.sendVerificationEmail({
+                    body: { email: user.email },
+                    headers: request?.headers,
+                });
+            }
+        },
+    },
+    emailVerification: {
+        sendOnSignUp: true,
+        sendOnSignIn: true,
+        autoSignInAfterVerification: true,
+        async sendVerificationEmail({ user, url, token }, request) {
+            console.log("📧 Better Auth triggered sendVerificationEmail for:", user.email);
+            console.log("🔑 Token received:", token);
+            console.log("🔗 URL received:", url);
 
-            // Better Auth can send tokens or links. If using OTP/tokens, we pass it directly:
-            await MailService.sendEmail(
-                user.email,
-                token, // or verification link depending on configuration
-                subject,
-                purposeText,
-                5 // expiry minutes
-            );
+            try {
+                const subject = MAIL_SUBJECTS?.ACCOUNT_REGISTRATION || "Verify Your Account";
+                const purposeText = "Welcome! Please use the verification code below to activate your account.";
+
+                await MailService.sendEmail(
+                    user.email,
+                    token,
+                    subject,
+                    purposeText,
+                    5
+                );
+                console.log("✅ Verification email sent successfully via MailService");
+            } catch (error) {
+                console.error("❌ Failed to send verification email from Better Auth hook:", error);
+            }
         },
     },
     session: {

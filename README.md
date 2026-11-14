@@ -49,3 +49,7 @@ npm run dev
 ```sh
 openssl rand -base64 32
 ```
+
+```sh
+npx auth@latest migrate --config src/lib/auth.lib.js
+```
