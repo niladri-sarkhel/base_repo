@@ -67,6 +67,16 @@ services:
       - "1025:1025" # SMTP server port
     networks:
       - backend_net     
+      
+  # lightweight postgres database client web ui
+  adminer:
+    image: adminer:latest
+    container_name: ${APP_NAME:-base_repo}_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - backend_net
 
 volumes:
   postgres_data:
